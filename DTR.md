@@ -29,7 +29,7 @@ David
 - Pull requests at logical points, review code/tests before merging. - David
 
 #### Expectations for giving and receiving feedback:
-- Feedback shouldn't always be in agreement. Suggestions/questions/discussion are also equally as important.
+- Feedback shouldn't always be in agreement. Suggestions/questions/discussion are also equally as important. - David
 
 #### Project management tools we will use (GitHub projects or Trello are popular tools):
 - I don't really like jumping from page-to-page or to different applications. If we can write a TDD in the project repo and check stuff off as we go, it'd probably be ideal. - David
