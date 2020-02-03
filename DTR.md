@@ -1,8 +1,8 @@
-Project:
+##Project: Battleships
 
-Group Member Names:
+####Group Member Names: David Tran
 
-Goals and Expectations for the Project (What does each group member hope to get out of this project? What do we want to achieve as a team? How will we know that we're successful?):
+###Goals and Expectations for the Project (What does each group member hope to get out of this project? What do we want to achieve as a team? How will we know that we're successful?):
 
 Team strengths & collaboration styles (consider discussing your Pairin qualities here):
 
