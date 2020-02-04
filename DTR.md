@@ -23,6 +23,7 @@ Kelsha:
 - Lover of Moderation - I value my well-being and remaining humble. I also value forgiveness and flexibility when things get tough.
 
 #### How we can use our strengths to overcome obstacles:
+- Since we share similar pairin results, we're both open to listening to each others ideas/feedback and understanding that it's more practically based rather than emotionally. Should we come across an obstacle, we're able to break it down into smaller more manageable pieces.
 
 #### Schedule Expectations (When are we available to work together and individually? What constraints do we have?):
 David:
@@ -87,3 +88,5 @@ Kelsha:
 #### Additional Notes:
 Kelsha:
 - I am most reachable via slack and am open to Zoom calls
+
+David: I tend to be on a computer a lot of the time regardless, so slack or even text messages would be the best way to contact me.
