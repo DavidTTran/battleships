@@ -1,8 +1,8 @@
 class Ship
 
-  def initialize(ship_name_parameter, cell_count_parameter)
-    @ship_name = ship_name_parameter
-    @cell_count = cell_count_parameter
+  def initialize(name_parameter, length_parameter)
+    @name = name_parameter
+    @length = length_parameter
   end
 
 end
