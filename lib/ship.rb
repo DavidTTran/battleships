@@ -5,11 +5,11 @@ class Ship
   def initialize(name_parameter, length_parameter)
     @name = name_parameter
     @length = length_parameter
-    @health = @length
+    @health = length
   end
 
   def sunk?
-    if  @health == @length
+    if hit == 0
       true
     else
       false
@@ -17,7 +17,7 @@ class Ship
   end
 
   def hit
-    @health - 1
+    @health -= 1
   end
 
 end
