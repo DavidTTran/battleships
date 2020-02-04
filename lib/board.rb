@@ -45,5 +45,4 @@ class Board
       true
     end
   end
-
 end
