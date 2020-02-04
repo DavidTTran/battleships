@@ -10,7 +10,6 @@ class Ship
 
   def sunk?
     true if @health == 0
-    end
   end
 
   def hit
