@@ -37,32 +37,13 @@ class Board
     number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}
 
     letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.uniq.size == 1)
-
     number_compare = (consecutive_num.include?(number_arr) || number_arr.uniq.size == 1)
 
-    if coordinates.size == ship_object.length && letter_compare && number_compare
-      true
-    else
+    if consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr)
       false
+    elsif coordinates.size == ship_object.length && letter_compare && number_compare
+      true
     end
   end
 
 end
-
-# pry(main)> board.valid_placement?(cruiser, ["A1", "A2"])
-# # => false
-#
-# pry(main)> board.valid_placement?(submarine, ["A2", "A3", "A4"])
-# # => false
-#Next, make sure the coordinates are consecutive:
-# pry(main)> board.valid_placement?(cruiser, ["A1", "A2", "A4"])
-# # => false
-#
-# pry(main)> board.valid_placement?(submarine, ["A1", "C1"])
-# # => false
-#
-# pry(main)> board.valid_placement?(cruiser, ["A3", "A2", "A1"])
-# # => false
-#
-# pry(main)> board.valid_placement?(submarine, ["C1", "B1"])
-# # => false
