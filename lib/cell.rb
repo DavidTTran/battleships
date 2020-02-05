@@ -27,7 +27,7 @@ class Cell
   end
 
   def render(test_ship = false)
-    if test_ship == true
+    if test_ship == true && @ship != nil
       "S"
     elsif @fired_upon == false
       "."
