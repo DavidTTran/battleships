@@ -91,5 +91,13 @@ class BoardTest < Minitest::Test
                  "B . . . . \n" +
                  "C . . . . \n" +
                  "D . . . . \n", @board.render(true)
+
+    @board.place(@submarine, ["B1", "C1"])
+    
+    assert_equal "  1 2 3 4 \n" +
+                 "A S S S . \n" +
+                 "B S . . . \n" +
+                 "C S . . . \n" +
+                 "D . . . . \n", @board.render(true)
   end
 end
