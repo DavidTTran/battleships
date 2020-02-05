@@ -1,4 +1,5 @@
 require './lib/cell'
+require 'pry'
 
 class Board
 
@@ -37,25 +38,65 @@ class Board
 
 
   def valid_placement?(ship_object, coordinates)
-    consecutive_num = [(1..4).to_a, (1..3).to_a, (2..4).to_a, [1,2], [2,3], [3,4]]
-    consecutive_letter = [("A".."D").to_a, ("A".."C").to_a, ("B".."D").to_a, ["A", "B"], ["B", "C"], ["C", "D"]]
+    consecutive_num = (1..4).to_a.join
+    consecutive_letter = ("A".."D").to_a.join
 
-    letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}
-    number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}
+    letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
+    number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
 
-    letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.uniq.size == 1)
-    number_compare = (consecutive_num.include?(number_arr) || number_arr.uniq.size == 1)
+    number_compare = (consecutive_num.include?(number_arr) || number_arr.squeeze.size == 1)
+    letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.squeeze.size == 1)
 
     if (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
       false
-    elsif coordinates.size == ship_object.length && (letter_compare && number_compare)  && is_occupied?(coordinates) == false
+    elsif coordinates.size == ship_object.length && (letter_compare && number_compare) && is_occupied?(coordinates) == false
       true
     end
   end
 
   def place(ship_object, coordinates)
-      coordinates.each do |coordinate|
-        @cells[coordinate].place_ship(ship_object)
+      if (valid_placement?(ship_object, coordinates))
+        coordinates.each do |coordinate|
+          @cells[coordinate].place_ship(ship_object)
       end
+    end
+  end
+
+  def render(test_ship = false)
+    column1 = []
+    column2 = []
+    column3 = []
+    column4 = []
+
+    if test_ship == true
+      @cells.each do |coordinate, cell|
+        if coordinate[1].to_i == 1
+          column1 << cell.render(true)
+        elsif coordinate[1].to_i == 2
+          column2 << cell.render(true)
+        elsif coordinate[1].to_i == 3
+          column3 << cell.render(true)
+        elsif coordinate[1].to_i == 4
+          column4 << cell.render(true)
+        end
+      end
+    else
+      @cells.each do |coordinate, cell|
+        if coordinate[1].to_i == 1
+          column1 << cell.render
+        elsif coordinate[1].to_i == 2
+          column2 << cell.render
+        elsif coordinate[1].to_i == 3
+          column3 << cell.render
+        elsif coordinate[1].to_i == 4
+          column4 << cell.render
+        end
+      end
+    end
+    "  1 2 3 4 \n" +
+    "A #{column1[0]} #{column2[0]} #{column3[0]} #{column4[0]} \n" +
+    "B #{column1[1]} #{column2[1]} #{column3[1]} #{column4[1]} \n" +
+    "C #{column1[2]} #{column2[2]} #{column3[2]} #{column4[2]} \n" +
+    "D #{column1[3]} #{column2[3]} #{column3[3]} #{column4[3]} \n"
   end
 end
