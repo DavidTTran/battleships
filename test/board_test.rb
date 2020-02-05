@@ -30,7 +30,7 @@ class BoardTest < Minitest::Test
     refute @board.valid_coordinate?("E1")
     refute @board.valid_coordinate?("A22")
   end
-  
+
   def test_it_can_have_invalid_placements
     refute @board.valid_placement?(@cruiser, ["A1", "A2"])
     refute @board.valid_placement?(@submarine, ["A2", "A3", "A4"])
@@ -53,5 +53,27 @@ class BoardTest < Minitest::Test
     refute @board.valid_placement?(@cruiser, ["A1", "B2", "C3"])
     refute @board.valid_placement?(@submarine, ["C2", "D3"])
     refute @board.valid_placement?(@submarine, ["D2", "E3"])
+  end
+
+  def test_it_can_place_ships
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    cell_1 = @board.cells["A1"]
+    cell_2 = @board.cells["A2"]
+    cell_3 = @board.cells["A3"]
+    cell_4 = @board.cells["A4"]
+
+    assert cell_3.ship == cell_2.ship
+    refute cell_4.ship == cell_3.ship
+  end
+
+  def test_ships_cannot_overlap
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    cell_1 = @board.cells["A1"]
+    cell_2 = @board.cells["A2"]
+    cell_3 = @board.cells["A3"]
+
+    refute @board.valid_placement?(@submarine, ["A1", "B1"])
+    refute @board.valid_placement?(@submarine, ["A3", "A4"])
+    assert @board.valid_placement?(@submarine, ["A4", "B4"])
   end
 end

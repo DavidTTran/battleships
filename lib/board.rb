@@ -29,6 +29,13 @@ class Board
     @cells.has_key?(coordinate)
   end
 
+  def is_occupied?(coordinates)
+    coordinates.one? do |coordinate|
+      @cells[coordinate].empty?
+    end
+  end
+
+
   def valid_placement?(ship_object, coordinates)
     consecutive_num = [(1..4).to_a, (1..3).to_a, (2..4).to_a, [1,2], [2,3], [3,4]]
     consecutive_letter = [("A".."D").to_a, ("A".."C").to_a, ("B".."D").to_a, ["A", "B"], ["B", "C"], ["C", "D"]]
@@ -39,10 +46,16 @@ class Board
     letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.uniq.size == 1)
     number_compare = (consecutive_num.include?(number_arr) || number_arr.uniq.size == 1)
 
-    if consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr)
+    if (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
       false
-    elsif coordinates.size == ship_object.length && letter_compare && number_compare
+    elsif coordinates.size == ship_object.length && (letter_compare && number_compare)  && is_occupied?(coordinates) == false
       true
     end
+  end
+
+  def place(ship_object, coordinates)
+      coordinates.each do |coordinate|
+        @cells[coordinate].place_ship(ship_object)
+      end
   end
 end
