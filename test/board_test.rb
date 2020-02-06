@@ -48,7 +48,6 @@ class BoardTest < Minitest::Test
     assert @board.valid_placement?(@cruiser, ["A1", "B1", "C1"])
   end
 
-
   def test_it_will_deny_diagonals
     refute @board.valid_placement?(@cruiser, ["A1", "B2", "C3"])
     refute @board.valid_placement?(@submarine, ["C2", "D3"])
@@ -64,6 +63,8 @@ class BoardTest < Minitest::Test
 
     assert cell_3.ship == cell_2.ship
     refute cell_4.ship == cell_3.ship
+
+    refute @board.place(@submarine, ["A4", "A5"])
   end
 
   def test_ships_cannot_overlap
@@ -77,7 +78,8 @@ class BoardTest < Minitest::Test
     assert @board.valid_placement?(@submarine, ["A4", "B4"])
   end
 
-  def test_board_render
+  def test_board_render_with_ships
+    skip
     @board.place(@cruiser, ["A1", "A2", "A3"])
 
     assert_equal "  1 2 3 4 \n" +
@@ -93,11 +95,34 @@ class BoardTest < Minitest::Test
                  "D . . . . \n", @board.render(true)
 
     @board.place(@submarine, ["B1", "C1"])
-    
+
     assert_equal "  1 2 3 4 \n" +
                  "A S S S . \n" +
                  "B S . . . \n" +
                  "C S . . . \n" +
                  "D . . . . \n", @board.render(true)
+
+    @board.place(@cruiser, ["D2", "D3", "D4"])
+
+    assert_equal "  1 2 3 4 \n" +
+                 "A S S S . \n" +
+                 "B S . . . \n" +
+                 "C S . . . \n" +
+                 "D . S S S \n", @board.render(true)
+  end
+
+  def test_shots_can_miss
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    @board.place(@submarine, ["B1", "C1"])
+    cell_1 = @board.cells["D4"]
+    cell_2 = @board.cells["C3"]
+    cell_1.fire_upon
+    cell_2.fire_upon
+
+    assert_equal "  1 2 3 4 \n" +
+                 "A S S S . \n" +
+                 "B S . . . \n" +
+                 "C S . M . \n" +
+                 "D . . . M \n", @board.render(true)
   end
 end

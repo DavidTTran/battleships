@@ -69,7 +69,8 @@ class Board
     column4 = []
 
     if test_ship == true
-      @cells.each do |coordinate, cell|
+      @cells.map do |coordinate, cell|
+        # binding.pry
         if coordinate[1].to_i == 1
           column1 << cell.render(true)
         elsif coordinate[1].to_i == 2
@@ -81,7 +82,7 @@ class Board
         end
       end
     else
-      @cells.each do |coordinate, cell|
+      @cells.map do |coordinate, cell|
         if coordinate[1].to_i == 1
           column1 << cell.render
         elsif coordinate[1].to_i == 2
