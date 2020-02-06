@@ -3,13 +3,20 @@ require './lib/board'
 
 class PlayGame
 
-  attr_reader :player_board, :computer_board, :cruiser, :submarine
+  attr_reader :player_board,
+              :computer_board,
+              :player_cruiser,
+              :player_submarine,
+              :computer_cruiser,
+              :computer_submarine
 
-  def initialize(player_board, computer_board)
-    @player_board = player_board
-    @computer_board = computer_board
-    @cruiser = Ship.new("Cruiser", 3)
-    @submarine = Ship.new("Submarine", 2)
+  def initialize
+    @player_board = Board.new
+    @computer_board = Board.new
+    @player_cruiser = Ship.new("Cruiser", 3)
+    @player_submarine = Ship.new("Submarine", 2)
+    @computer_cruiser = Ship.new("Cruiser", 3)
+    @computer_submarine = Ship.new("Submarine", 2)
   end
 
   def start
@@ -19,85 +26,96 @@ class PlayGame
     player_input = gets.chomp.downcase
 
     if player_input == "p"
-      # setup_player_cruiser
-      # setup_player_submarine
-      setup_computer_submarine
+      puts "You need to place your two ships on the board."
+      puts "The Cruiser is three units long and the Submarine is two units long."
+      setup_player_ships(@player_cruiser)
+      setup_player_ships(@player_submarine)
+
+      setup_computer_ships(@computer_submarine)
+      require "pry"; binding.pry
+      setup_computer_ships(@computer_cruiser)
+      require "pry"; binding.pry
+      puts "\n\n Setup complete. Game staring now... \n\n"
+
+      until player_ships_sunk? || computer_ships_sunk?
+        player_fire_upon
+        computer_fire_upon
+      end
+      puts "Game over!"
 
     elsif player_input == "q"
 
     end
   end
 
-    def setup_player_cruiser
-      puts "You need to place your two ships on the board."
-      puts "The Cruiser is three units long and the Submarine is two units long."
-      puts "==============PLAYER BOARD=============="
-      puts @player_board.render
+  def player_ships_sunk?
+    @player_submarine.sunk? && @player_cruiser.sunk?
+  end
 
-      puts "Enter the coordinates for the Cruiser (3 spaces):"
+  def computer_ships_sunk?
+    @computer_submarine.sunk? && @computer_cruiser.sunk?
+  end
+
+  def setup_player_ships(ship)
+    puts "==============PLAYER BOARD=============="
+    puts @player_board.render
+
+    puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
+    print "> "
+    coordinates = gets.chomp.upcase.split(" ")
+    until @player_board.valid_placement?(ship, coordinates)
+        puts "Those are invalid coordinates. Please try again."
+        print "> "
+        coordinates = gets.chomp.upcase.split(" ")
+     end
+     @player_board.valid_placement?(ship, coordinates)
+     @player_board.place(ship, coordinates)
+     puts "==============PLAYER BOARD=============="
+     puts @player_board.render(true)
+  end
+
+  def setup_computer_ships(ship)
+    rand_coordinate1 = @computer_board.cells.keys.sample
+    rand_coordinate2 = @computer_board.cells.keys.sample
+
+    until @computer_board.valid_placement?(ship, [rand_coordinate1, rand_coordinate2])
+      rand_coordinate1 = @computer_board.cells.keys.sample
+      rand_coordinate2 = @computer_board.cells.keys.sample
+    end
+    @computer_board.place(ship, [rand_coordinate1, rand_coordinate2])
+  end
+
+  def player_fire_upon
+    puts "=============COMPUTER BOARD============="
+    puts @computer_board.render(true)
+
+    puts "==============PLAYER BOARD=============="
+    puts @player_board.render(true)
+
+    puts "Enter the coordinate for your shot"
+    print "> "
+
+    player_fire = gets.chomp.upcase
+
+    until @computer_board.valid_coordinate?(player_fire)
+      puts "Invalid. Please enter a valid coordinate for your shot"
       print "> "
-      cruiser_coordinates = gets.chomp.upcase.split(" ")
-      until @player_board.valid_placement?(@cruiser, cruiser_coordinates)
-          puts "Those are invalid coordinates. Please try again:"
-          print "> "
-          cruiser_coordinates = gets.chomp.upcase.split(" ")
-       end
-       @player_board.valid_placement?(@cruiser, cruiser_coordinates)
-       @player_board.place(@cruiser, cruiser_coordinates)
-       puts "==============PLAYER BOARD=============="
-       puts @player_board.render(true)
     end
 
-    def user_submarine_coordinates
-      submarine_coordinates = gets.chomp.upcase.split(" ")
+    @computer_board.cells[player_fire].fire_upon
+  end
+
+  def computer_fire_upon
+    rand_coordinate = @computer_board.cells.keys.sample
+
+    until @computer_board.valid_coordinate?(rand_coordinate)
+      rand_coordinate = @computer_board.cells.keys.sample
     end
 
-    def setup_player_submarine
-      puts "\n The Submarine is two units long."
-      puts "==============PLAYER BOARD=============="
-      puts @player_board.render(true)
+    @player_board.cells[rand_coordinate].fire_upon
 
-      puts "Enter the coordinates for the Submarine (2 spaces):"
-      print "> "
-      submarine_coordinates = gets.chomp.upcase.split(" ")
-      until (@player_board.valid_placement?(@submarine, submarine_coordinates))
-          puts "Those are invalid coordinates. Please try again:"
-          print "> "
-          submarine_coordinates = gets.chomp.upcase.split(" ")
-       end
-       @player_board.valid_placement?(@submarine, submarine_coordinates)
-       @player_board.place(@submarine, submarine_coordinates)
-       puts "==============PLAYER BOARD=============="
-       puts @player_board.render(true)
-    end
+  end
 
-    def setup_computer_submarine
-        rand_coordinate1 = @computer_board.cells.keys.sample
-        rand_coordinate2 = @computer_board.cells.keys.sample
-
-      until (@computer_board.valid_placement?(@submarine, [rand_coordinate1, rand_coordinate2])) && (rand_coordinate1 != rand_coordinate2)
-        rand_coordinate1 = @computer_board.cells.keys.sample
-        rand_coordinate2 = @computer_board.cells.keys.sample
-      end
-
-      @computer_board.place(@submarine, [rand_coordinate1, rand_coordinate2])
-      puts "=============COMPUTER BOARD============="
-      puts @computer_board.render(true)
-    end
-
-    def setup_computer_cruiser
-        rand_coordinate1 = @computer_board.cells.keys.sample
-        rand_coordinate2 = @computer_board.cells.keys.sample
-
-      until @computer_board.valid_placement?(@cruiser, [rand_coordinate1, rand_coordinate2]) && (rand_coordinate1 != rand_coordinate2)
-        rand_coordinate1 = @computer_board.cells.keys.sample
-        rand_coordinate2 = @computer_board.cells.keys.sample
-      end
-
-      @computer_board.place(@cruiser, [rand_coordinate1, rand_coordinate2])
-      puts "=============COMPUTER BOARD============="
-      puts @computer_board.render(true)
-    end
 
 
   end
