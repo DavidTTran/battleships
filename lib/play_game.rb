@@ -30,11 +30,10 @@ class PlayGame
       puts "The Cruiser is three units long and the Submarine is two units long."
       setup_player_ships(@player_cruiser)
       setup_player_ships(@player_submarine)
+      
+      setup_computer_submarine(@computer_submarine)
+      setup_computer_cruiser(@computer_cruiser)
 
-      setup_computer_ships(@computer_submarine)
-      require "pry"; binding.pry
-      setup_computer_ships(@computer_cruiser)
-      require "pry"; binding.pry
       puts "\n\n Setup complete. Game staring now... \n\n"
 
       until player_ships_sunk? || computer_ships_sunk?
@@ -74,15 +73,28 @@ class PlayGame
      puts @player_board.render(true)
   end
 
-  def setup_computer_ships(ship)
+  def setup_computer_submarine(computer_submarine)
     rand_coordinate1 = @computer_board.cells.keys.sample
     rand_coordinate2 = @computer_board.cells.keys.sample
 
-    until @computer_board.valid_placement?(ship, [rand_coordinate1, rand_coordinate2])
+    until @computer_board.valid_placement?(computer_submarine, [rand_coordinate1, rand_coordinate2])
       rand_coordinate1 = @computer_board.cells.keys.sample
       rand_coordinate2 = @computer_board.cells.keys.sample
     end
-    @computer_board.place(ship, [rand_coordinate1, rand_coordinate2])
+    @computer_board.place(computer_submarine, [rand_coordinate1, rand_coordinate2])
+  end
+
+  def setup_computer_cruiser(computer_cruiser)
+    rand_coordinate3 = @computer_board.cells.keys.sample
+    rand_coordinate4 = @computer_board.cells.keys.sample
+    rand_coordinate5 = @computer_board.cells.keys.sample
+
+    until @computer_board.valid_placement?(computer_cruiser, [rand_coordinate3, rand_coordinate4, rand_coordinate5])
+      rand_coordinate3 = @computer_board.cells.keys.sample
+      rand_coordinate4 = @computer_board.cells.keys.sample
+      rand_coordinate5 = @computer_board.cells.keys.sample
+    end
+    @computer_board.place(computer_cruiser, [rand_coordinate3, rand_coordinate4, rand_coordinate5])
   end
 
   def player_fire_upon
