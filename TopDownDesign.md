@@ -16,7 +16,7 @@ B . . . .
 C . . S .
 D . . S .
 
-### Battleship Game
+```### Battleship Game
 1. Build code for iteration 1
  1.1 Create a ship class ruby file
  1.2 Create a ship class test file
@@ -46,3 +46,4 @@ D . . S .
 
 1. Build code for iteration 2
 1. Build code for iteration 3
+```
