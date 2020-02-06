@@ -3,13 +3,7 @@ require './lib/cell'
 require './lib/board'
 require './lib/play_game'
 
-cruiser = Ship.new("Cruiser", 3)
-submarine = Ship.new("Submarine", 2)
-
-player_board = Board.new
-computer_board = Board.new
-
-game = PlayGame.new(player_board, computer_board)
+game = PlayGame.new
 game.start
 
 # sample from cell hash
