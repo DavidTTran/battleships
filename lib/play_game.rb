@@ -19,8 +19,10 @@ class PlayGame
     player_input = gets.chomp.downcase
 
     if player_input == "p"
-      setup_player_cruiser
-      setup_player_submarine
+      # setup_player_cruiser
+      # setup_player_submarine
+      setup_computer_submarine
+
     elsif player_input == "q"
 
     end
@@ -46,6 +48,10 @@ class PlayGame
        puts @player_board.render(true)
     end
 
+    def user_submarine_coordinates
+      submarine_coordinates = gets.chomp.upcase.split(" ")
+    end
+
     def setup_player_submarine
       puts "\n The Submarine is two units long."
       puts "==============PLAYER BOARD=============="
@@ -54,7 +60,7 @@ class PlayGame
       puts "Enter the coordinates for the Submarine (2 spaces):"
       print "> "
       submarine_coordinates = gets.chomp.upcase.split(" ")
-      until @player_board.valid_placement?(@submarine, submarine_coordinates)
+      until (@player_board.valid_placement?(@submarine, submarine_coordinates))
           puts "Those are invalid coordinates. Please try again:"
           print "> "
           submarine_coordinates = gets.chomp.upcase.split(" ")
@@ -65,6 +71,34 @@ class PlayGame
        puts @player_board.render(true)
     end
 
+    def setup_computer_submarine
+        rand_coordinate1 = @computer_board.cells.keys.sample
+        rand_coordinate2 = @computer_board.cells.keys.sample
+
+      until (@computer_board.valid_placement?(@submarine, [rand_coordinate1, rand_coordinate2])) && (rand_coordinate1 != rand_coordinate2)
+        rand_coordinate1 = @computer_board.cells.keys.sample
+        rand_coordinate2 = @computer_board.cells.keys.sample
+      end
+
+      @computer_board.place(@submarine, [rand_coordinate1, rand_coordinate2])
+      puts "=============COMPUTER BOARD============="
+      puts @computer_board.render(true)
+    end
+
+    def setup_computer_cruiser
+        rand_coordinate1 = @computer_board.cells.keys.sample
+        rand_coordinate2 = @computer_board.cells.keys.sample
+
+      until @computer_board.valid_placement?(@cruiser, [rand_coordinate1, rand_coordinate2]) && (rand_coordinate1 != rand_coordinate2)
+        rand_coordinate1 = @computer_board.cells.keys.sample
+        rand_coordinate2 = @computer_board.cells.keys.sample
+      end
+
+      @computer_board.place(@cruiser, [rand_coordinate1, rand_coordinate2])
+      puts "=============COMPUTER BOARD============="
+      puts @computer_board.render(true)
+    end
+
 
   end
 
@@ -72,24 +106,6 @@ class PlayGame
 
 
 
-#sample from cell hash
-
-
-# I have laid out my ships on the grid.
-# You now need to lay out your two ships.
-# The Cruiser is three units long and the Submarine is two units long.
-#   1 2 3 4
-# A . . . .
-# B . . . .
-# C . . . .
-# D . . . .
-# Enter the squares for the Cruiser (3 spaces):
-# > A1 A2 A3
-# When the user enters a valid sequence of spaces, the ship should be placed on the board, the new board with the ship should be shown to the user, and then the user should be asked to place the other ship.
-# Enter the squares for the Submarine (2 spaces):
-# > C1 C3
-# Those are invalid coordinates. Please try again:
-# > A1 B1
 # A single turn consists of:
 #
 # Displaying the boards
