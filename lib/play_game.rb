@@ -34,11 +34,14 @@ class PlayGame
       setup_computer_submarine(@computer_submarine)
       setup_computer_cruiser(@computer_cruiser)
 
-      puts "\n\n Setup complete. Game staring now... \n\n"
+      puts "\n Setup complete. Game staring now... \n\n"
 
       until player_ships_sunk? || computer_ships_sunk?
+        render_boards
         player_fire_upon
         computer_fire_upon
+        player_shot_feedback(player_fire_upon)
+        computer_shot_feedback(computer_fire)
       end
       puts "Game over!"
 
@@ -54,22 +57,27 @@ class PlayGame
     @computer_submarine.sunk? && @computer_cruiser.sunk?
   end
 
+  def render_boards
+    puts "=============COMPUTER BOARD============= \n"
+    puts @computer_board.render(true)
+    puts "==============PLAYER BOARD============== \n"
+    puts @player_board.render(true)
+    puts "========================================"
+  end
+
   def setup_player_ships(ship)
-    puts "==============PLAYER BOARD=============="
+    puts "\n ==============PLAYER BOARD=============="
     puts @player_board.render(true)
 
-    puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
+    puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces)"
     print "> "
     coordinates = gets.chomp.upcase.split(" ")
     until @player_board.valid_placement?(ship, coordinates)
         puts "Those are invalid coordinates. Please try again."
         print "> "
         coordinates = gets.chomp.upcase.split(" ")
-     end
-     @player_board.valid_placement?(ship, coordinates)
-     @player_board.place(ship, coordinates)
-     puts "==============PLAYER BOARD=============="
-     puts @player_board.render(true)
+    end
+    @player_board.place(ship, coordinates)
   end
 
   def setup_computer_submarine(computer_submarine)
@@ -97,36 +105,49 @@ class PlayGame
   end
 
   def player_fire_upon
-    puts "=============COMPUTER BOARD============="
-    puts @computer_board.render(true)
-
-    puts "==============PLAYER BOARD=============="
-    puts @player_board.render(true)
-
     puts "Enter the coordinate for your shot"
     print "> "
 
     player_fire = gets.chomp.upcase
 
-    until @computer_board.valid_coordinate?(player_fire) && @computer_board.has_key?(player_input)
+    until @computer_board.valid_coordinate?(player_fire)
       puts "Invalid. Please enter a valid coordinate for your shot"
       print "> "
+      player_fire = gets.chomp.upcase
     end
 
     @computer_board.cells[player_fire].fire_upon
+    player_fire
   end
 
   def computer_fire_upon
-    rand_coordinate = @computer_board.cells.keys.sample
+    random_fire = @computer_board.cells.keys.sample
 
-    until @computer_board.valid_coordinate?(rand_coordinate)
-      rand_coordinate = @computer_board.cells.keys.sample
+    until @computer_board.valid_coordinate?(random_fire)
+      random_fire = @computer_board.cells.keys.sample
     end
 
-    @player_board.cells[rand_coordinate].fire_upon
+    @player_board.cells[random_fire].fire_upon
+    random_fire
+  end
+
+  def player_shot_feedback(player_fire)
+    if @computer_board.cells[player_fire].empty?
+      puts "Your shot missed!"
+    elsif @computer_board.cells[player_fire].ship.health < 1
+      puts "Your shot sunk an enemy ship!"
+    else
+      puts "Your shot hit an enemy ship!"
+    end
+  end
+
+  def computer_shot_feedback(computer_fire)
+    if @player_board.cells[computer_fire].empty?
+      puts "The enemy shot missed!"
+    elsif @player_board.cells[computer_fire].ship.health < 1
+      puts "The enemy shot sunk your ship!"
+    else
+      puts "The enemy shot hit your ship!"
+    end
   end
 end
-
-
-# Your shot on A4 was a miss.
-# My shot on C1 was a miss.
