@@ -125,6 +125,20 @@ class BoardTest < Minitest::Test
                  "D S . . M \n", @board.render(true)
   end
 
+  def test_shots_can_miss
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    @board.place(@submarine, ["C1", "D1"])
+    cell_1 = @board.cells["D4"]
+    cell_2 = @board.cells["C3"]
+    cell_1.fire_upon
+    cell_2.fire_upon
+    assert_equal "  1 2 3 4 \n" +
+                 "A S S S . \n" +
+                 "B . . . . \n" +
+                 "C S . M . \n" +
+                 "D S . . M \n", @board.render(true)
+  end
+
   def test_shots_can_hit_and_destory_ship
     @board.place(@cruiser, ["A1", "A2", "A3"])
     cell_1 = @board.cells["A1"]
@@ -146,5 +160,4 @@ class BoardTest < Minitest::Test
                  "C . . . . \n" +
                  "D . . . . \n", @board.render
   end
-
 end

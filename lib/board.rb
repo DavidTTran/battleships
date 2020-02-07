@@ -31,9 +31,7 @@ class Board
   end
 
   def is_occupied?(coordinates)
-    coordinates.one? do |coordinate|
-      @cells[coordinate].empty?
-    end
+    coordinates.one? {|coordinate| @cells[coordinate].empty?}
   end
 
 
@@ -47,9 +45,9 @@ class Board
     number_compare = (consecutive_num.include?(number_arr) || number_arr.squeeze.size == 1)
     letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.squeeze.size == 1)
 
-    if (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
+    if (letter_arr.squeeze.size == 1 && number_arr.squeeze.size == 1) || (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
       false
-    elsif coordinates.size == ship_object.length && (letter_compare && number_compare) && is_occupied?(coordinates) == false
+    elsif (coordinates.size == ship_object.length) && (letter_compare && number_compare) && (is_occupied?(coordinates) == false)
       true
     end
   end

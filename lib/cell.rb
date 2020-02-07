@@ -8,7 +8,7 @@ class Cell
   end
 
   def empty?
-    if @ship == nil then true else false end
+    @ship == nil
   end
 
   def place_ship(ship_object)
@@ -27,7 +27,7 @@ class Cell
   end
 
   def render(test_ship = false)
-    if test_ship == true && @ship != nil
+    if test_ship == true && @ship != nil && @fired_upon == false
       "S"
     elsif @fired_upon == false
       "."
