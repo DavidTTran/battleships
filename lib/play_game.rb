@@ -19,6 +19,19 @@ class PlayGame
     @computer_submarine = Ship.new("Submarine", 2)
   end
 
+  def setup
+    puts "You need to place your two ships on the board."
+    puts "The Cruiser is three units long and the Submarine is two units long."
+    setup_player_ships(@player_cruiser)
+    setup_player_ships(@player_submarine)
+
+    setup_computer_submarine(@computer_submarine)
+    setup_computer_cruiser(@computer_cruiser)
+
+    puts "\n Setup complete. Game staring now... \n"
+    sleep(1)
+  end
+
   def start
     puts "Welcome to BATTLESHIP!"
     puts "Enter 'p' to play. Enter 'q' to quit."
@@ -26,31 +39,25 @@ class PlayGame
     player_input = gets.chomp.downcase
 
     if player_input == "p"
-      puts "You need to place your two ships on the board."
-      puts "The Cruiser is three units long and the Submarine is two units long."
-      setup_player_ships(@player_cruiser)
-      setup_player_ships(@player_submarine)
-
-      setup_computer_submarine(@computer_submarine)
-      setup_computer_cruiser(@computer_cruiser)
-
-      puts "\n Setup complete. Game staring now... \n"
-      sleep(1)
+      setup
 
       until player_ships_sunk? || computer_ships_sunk?
         render_boards
         player_shot_feedback(player_fire_upon)
         computer_shot_feedback(computer_fire_upon)
       end
-      if player_ships_sunk?
-        puts "\n==========Game over! You lost..==========\n"
-        start
-      else
-        puts "\n==========Game over! You won!!==========\n"
-        start
-      end
-
+    end_game
     elsif player_input == "q"
+    end
+  end
+
+  def end_game
+    if player_ships_sunk?
+      puts "\n==========Game over! You lost..==========\n\n"
+      start
+    else
+      puts "\n==========Game over! You won!!==========\n\n"
+      start
     end
   end
 
@@ -86,29 +93,19 @@ class PlayGame
   end
 
   def setup_computer_submarine(computer_submarine)
-    rand_coordinate1 = @computer_board.cells.keys.sample
-    rand_coordinate2 = @computer_board.cells.keys.sample
-    com_sub_coord = [rand_coordinate1, rand_coordinate2]
+    com_sub_coord = @computer_board.cells.keys.sample(2)
 
-    until @computer_board.valid_placement?(computer_submarine, com_sub_coord) && com_sub_coord.all? {|coord| @computer_board.cells[coord].empty? == true}
-      rand_coordinate1 = @computer_board.cells.keys.sample
-      rand_coordinate2 = @computer_board.cells.keys.sample
-      com_sub_coord = [rand_coordinate1, rand_coordinate2]
+    until @computer_board.valid_placement?(computer_submarine, com_sub_coord) && (com_sub_coord.all? {|coord| @computer_board.cells[coord].empty? == true})
+      com_sub_coord = @computer_board.cells.keys.sample(2)
     end
     @computer_board.place(computer_submarine, com_sub_coord)
   end
 
   def setup_computer_cruiser(computer_cruiser)
-    rand_coordinate3 = @computer_board.cells.keys.sample
-    rand_coordinate4 = @computer_board.cells.keys.sample
-    rand_coordinate5 = @computer_board.cells.keys.sample
-    com_cruiser_coord = [rand_coordinate3, rand_coordinate4, rand_coordinate5]
+    com_cruiser_coord = @computer_board.cells.keys.sample(3)
 
     until @computer_board.valid_placement?(computer_cruiser, com_cruiser_coord) && com_cruiser_coord.all? {|coord| @computer_board.cells[coord].empty? == true}
-      rand_coordinate3 = @computer_board.cells.keys.sample
-      rand_coordinate4 = @computer_board.cells.keys.sample
-      rand_coordinate5 = @computer_board.cells.keys.sample
-      com_cruiser_coord = [rand_coordinate3, rand_coordinate4, rand_coordinate5]
+      com_cruiser_coord = @computer_board.cells.keys.sample(3)
     end
     @computer_board.place(computer_cruiser, com_cruiser_coord)
   end
@@ -152,11 +149,11 @@ class PlayGame
 
   def computer_shot_feedback(computer_fire)
     if @player_board.cells[computer_fire].empty?
-      puts "The enemy shot missed!"
+      puts "\nThe enemy shot missed!"
     elsif @player_board.cells[computer_fire].ship.health < 1
-      puts "The enemy shot sunk your ship!"
+      puts "\nThe enemy shot sunk your ship!"
     else
-      puts "The enemy shot hit your ship!"
+      puts "\nThe enemy shot hit your ship!"
     end
   end
 end
