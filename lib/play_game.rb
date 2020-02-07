@@ -34,16 +34,21 @@ class PlayGame
       setup_computer_submarine(@computer_submarine)
       setup_computer_cruiser(@computer_cruiser)
 
-      puts "\n Setup complete. Game staring now... \n\n"
+      puts "\n Setup complete. Game staring now... \n"
+      sleep(1)
 
       until player_ships_sunk? || computer_ships_sunk?
         render_boards
-        player_fire_upon
-        computer_fire_upon
         player_shot_feedback(player_fire_upon)
-        computer_shot_feedback(computer_fire)
+        computer_shot_feedback(computer_fire_upon)
       end
-      puts "Game over!"
+      if player_ships_sunk?
+        puts "\n==========Game over! You lost..=========="
+        start
+      else
+        puts "\n==========Game over! You won!!=========="
+        start
+      end
 
     elsif player_input == "q"
     end
@@ -58,7 +63,7 @@ class PlayGame
   end
 
   def render_boards
-    puts "=============COMPUTER BOARD============= \n"
+    puts "\n=============COMPUTER BOARD============= \n"
     puts @computer_board.render(true)
     puts "==============PLAYER BOARD============== \n"
     puts @player_board.render(true)
@@ -108,36 +113,36 @@ class PlayGame
     puts "Enter the coordinate for your shot"
     print "> "
 
-    player_fire = gets.chomp.upcase
+    player_shot = gets.chomp.upcase
 
-    until @computer_board.valid_coordinate?(player_fire)
+    until @computer_board.valid_coordinate?(player_shot) && @computer_board.cells[player_shot].fired_upon? == false
       puts "Invalid. Please enter a valid coordinate for your shot"
       print "> "
-      player_fire = gets.chomp.upcase
+      player_shot = gets.chomp.upcase
     end
 
-    @computer_board.cells[player_fire].fire_upon
-    player_fire
+    @computer_board.cells[player_shot].fire_upon
+    player_shot
   end
 
   def computer_fire_upon
-    random_fire = @computer_board.cells.keys.sample
+    computer_shot = @player_board.cells.keys.sample
 
-    until @computer_board.valid_coordinate?(random_fire)
-      random_fire = @computer_board.cells.keys.sample
+    until @player_board.cells[computer_shot].fired_upon? == false
+      computer_shot = @player_board.cells.keys.sample
     end
 
-    @player_board.cells[random_fire].fire_upon
-    random_fire
+    @player_board.cells[computer_shot].fire_upon
+    computer_shot
   end
 
   def player_shot_feedback(player_fire)
     if @computer_board.cells[player_fire].empty?
-      puts "Your shot missed!"
+      puts "\nYour shot missed!"
     elsif @computer_board.cells[player_fire].ship.health < 1
-      puts "Your shot sunk an enemy ship!"
+      puts "\nYour shot sunk an enemy ship!"
     else
-      puts "Your shot hit an enemy ship!"
+      puts "\nYour shot hit an enemy ship!"
     end
   end
 
