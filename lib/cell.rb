@@ -8,7 +8,7 @@ class Cell
   end
 
   def empty?
-    if @ship == nil then true else false end
+    @ship == nil
   end
 
   def place_ship(ship_object)
