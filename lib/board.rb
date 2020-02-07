@@ -51,24 +51,14 @@ class Board
     else
       false
     end
-
-    # number_compare = (consecutive_num.include?(number_arr) || number_arr.squeeze.size == 1)
-    # letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.squeeze.size == 1)
-
-    # if (letter_arr.squeeze.size == 1 && number_arr.squeeze.size == 1) || (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
-
-    #   false
-    # elsif (coordinates.size == ship_object.length) && (letter_compare && number_compare) && (is_occupied?(coordinates) == false)
-    #   true
-    # end
   end
 
   def place(ship_object, coordinates)
       if (valid_placement?(ship_object, coordinates))
         coordinates.each do |coordinate|
           @cells[coordinate].place_ship(ship_object)
+        end
       end
-    end
   end
 
   def render(test_ship = false)
