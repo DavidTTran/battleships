@@ -33,7 +33,6 @@ class PlayGame
 
       setup_computer_submarine(@computer_submarine)
       setup_computer_cruiser(@computer_cruiser)
-      puts @computer_board.render(true)
 
       puts "\n\n Setup complete. Game staring now... \n\n"
 
@@ -57,7 +56,7 @@ class PlayGame
 
   def setup_player_ships(ship)
     puts "==============PLAYER BOARD=============="
-    puts @player_board.render
+    puts @player_board.render(true)
 
     puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces):"
     print "> "
@@ -109,7 +108,7 @@ class PlayGame
 
     player_fire = gets.chomp.upcase
 
-    until @computer_board.valid_coordinate?(player_fire)
+    until @computer_board.valid_coordinate?(player_fire) && @computer_board.has_key?(player_input)
       puts "Invalid. Please enter a valid coordinate for your shot"
       print "> "
     end
@@ -127,3 +126,7 @@ class PlayGame
     @player_board.cells[rand_coordinate].fire_upon
   end
 end
+
+
+# Your shot on A4 was a miss.
+# My shot on C1 was a miss.
