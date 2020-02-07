@@ -42,14 +42,25 @@ class Board
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
     number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
 
-    number_compare = (consecutive_num.include?(number_arr) || number_arr.squeeze.size == 1)
-    letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.squeeze.size == 1)
+    horizontal_check = (letter_arr.squeeze.size == 1 && consecutive_num.include?(number_arr))
 
-    if (letter_arr.squeeze.size == 1 && number_arr.squeeze.size == 1) || (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
-      false
-    elsif (coordinates.size == ship_object.length) && (letter_compare && number_compare) && (is_occupied?(coordinates) == false)
+    vertical_check = (number_arr.squeeze.size == 1 && consecutive_letter.include?(letter_arr))
+
+    if (coordinates.size == ship_object.length) && (horizontal_check || vertical_check) && (is_occupied?(coordinates) == false)
       true
+    else
+      false
     end
+
+    # number_compare = (consecutive_num.include?(number_arr) || number_arr.squeeze.size == 1)
+    # letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.squeeze.size == 1)
+
+    # if (letter_arr.squeeze.size == 1 && number_arr.squeeze.size == 1) || (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
+
+    #   false
+    # elsif (coordinates.size == ship_object.length) && (letter_compare && number_compare) && (is_occupied?(coordinates) == false)
+    #   true
+    # end
   end
 
   def place(ship_object, coordinates)
