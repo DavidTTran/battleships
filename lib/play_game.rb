@@ -26,21 +26,22 @@ class PlayGame
     player_input = gets.chomp.downcase
 
     if player_input == "p"
-      puts "You need to place your two ships on the board."
-      puts "The Cruiser is three units long and the Submarine is two units long."
-      setup_player_ships(@player_cruiser)
-      setup_player_ships(@player_submarine)
-      
+      # puts "You need to place your two ships on the board."
+      # puts "The Cruiser is three units long and the Submarine is two units long."
+      # setup_player_ships(@player_cruiser)
+      # setup_player_ships(@player_submarine)
+
       setup_computer_submarine(@computer_submarine)
       setup_computer_cruiser(@computer_cruiser)
-
-      puts "\n\n Setup complete. Game staring now... \n\n"
-
-      until player_ships_sunk? || computer_ships_sunk?
-        player_fire_upon
-        computer_fire_upon
-      end
-      puts "Game over!"
+      puts @computer_board.render(true)
+      #
+      # puts "\n\n Setup complete. Game staring now... \n\n"
+      #
+      # until player_ships_sunk? || computer_ships_sunk?
+      #   player_fire_upon
+      #   computer_fire_upon
+      # end
+      # puts "Game over!"
 
     elsif player_input == "q"
 
