@@ -43,10 +43,10 @@ class PlayGame
         computer_shot_feedback(computer_fire_upon)
       end
       if player_ships_sunk?
-        puts "\n==========Game over! You lost..=========="
+        puts "\n==========Game over! You lost..==========\n"
         start
       else
-        puts "\n==========Game over! You won!!=========="
+        puts "\n==========Game over! You won!!==========\n"
         start
       end
 
@@ -88,25 +88,29 @@ class PlayGame
   def setup_computer_submarine(computer_submarine)
     rand_coordinate1 = @computer_board.cells.keys.sample
     rand_coordinate2 = @computer_board.cells.keys.sample
+    com_sub_coord = [rand_coordinate1, rand_coordinate2]
 
-    until @computer_board.valid_placement?(computer_submarine, [rand_coordinate1, rand_coordinate2])
+    until @computer_board.valid_placement?(computer_submarine, com_sub_coord) && com_sub_coord.all? {|coord| @computer_board.cells[coord].empty? == true}
       rand_coordinate1 = @computer_board.cells.keys.sample
       rand_coordinate2 = @computer_board.cells.keys.sample
+      com_sub_coord = [rand_coordinate1, rand_coordinate2]
     end
-    @computer_board.place(computer_submarine, [rand_coordinate1, rand_coordinate2])
+    @computer_board.place(computer_submarine, com_sub_coord)
   end
 
   def setup_computer_cruiser(computer_cruiser)
     rand_coordinate3 = @computer_board.cells.keys.sample
     rand_coordinate4 = @computer_board.cells.keys.sample
     rand_coordinate5 = @computer_board.cells.keys.sample
+    com_cruiser_coord = [rand_coordinate3, rand_coordinate4, rand_coordinate5]
 
-    until @computer_board.valid_placement?(computer_cruiser, [rand_coordinate3, rand_coordinate4, rand_coordinate5])
+    until @computer_board.valid_placement?(computer_cruiser, com_cruiser_coord) && com_cruiser_coord.all? {|coord| @computer_board.cells[coord].empty? == true}
       rand_coordinate3 = @computer_board.cells.keys.sample
       rand_coordinate4 = @computer_board.cells.keys.sample
       rand_coordinate5 = @computer_board.cells.keys.sample
+      com_cruiser_coord = [rand_coordinate3, rand_coordinate4, rand_coordinate5]
     end
-    @computer_board.place(computer_cruiser, [rand_coordinate3, rand_coordinate4, rand_coordinate5])
+    @computer_board.place(computer_cruiser, com_cruiser_coord)
   end
 
   def player_fire_upon
