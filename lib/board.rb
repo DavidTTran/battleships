@@ -34,30 +34,32 @@ class Board
     coordinates.one? {|coordinate| @cells[coordinate].empty?}
   end
 
-
-  def valid_placement?(ship_object, coordinates)
+  def horizontal_check(coordinates)
     consecutive_num = (1..4).to_a.join
-    consecutive_letter = ("A".."D").to_a.join
-
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
     number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
 
-    number_compare = (consecutive_num.include?(number_arr) || number_arr.squeeze.size == 1)
-    letter_compare = (consecutive_letter.include?(letter_arr) || letter_arr.squeeze.size == 1)
+    horizontal_check = (letter_arr.squeeze.size == 1 && consecutive_num.include?(number_arr))
+  end
 
-    if (letter_arr.squeeze.size == 1 && number_arr.squeeze.size == 1) || (consecutive_letter.include?(letter_arr) && consecutive_num.include?(number_arr))
-      false
-    elsif (coordinates.size == ship_object.length) && (letter_compare && number_compare) && (is_occupied?(coordinates) == false)
-      true
-    end
+  def vertical_check(coordinates)
+    consecutive_letter = ("A".."D").to_a.join
+    number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
+    letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
+
+    vertical_check = (number_arr.squeeze.size == 1 && consecutive_letter.include?(letter_arr))
+  end
+
+  def valid_placement?(ship_object, coordinates)
+    (coordinates.size == ship_object.length) && (horizontal_check(coordinates) || vertical_check(coordinates)) && (is_occupied?(coordinates) == false)
   end
 
   def place(ship_object, coordinates)
       if (valid_placement?(ship_object, coordinates))
         coordinates.each do |coordinate|
           @cells[coordinate].place_ship(ship_object)
+        end
       end
-    end
   end
 
   def render(test_ship = false)
