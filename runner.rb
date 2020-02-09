@@ -4,4 +4,4 @@ require './lib/board'
 require './lib/play_game'
 
 game = PlayGame.new
-game.start
+game.game_menu
