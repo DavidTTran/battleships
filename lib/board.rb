@@ -62,15 +62,14 @@ class Board
       end
   end
 
-  def render(test_ship = false)
+  def render(show_ship = false)
     column1 = []
     column2 = []
     column3 = []
     column4 = []
 
-    if test_ship == true
+    if show_ship == true
       @cells.map do |coordinate, cell|
-        # binding.pry
         if coordinate[1].to_i == 1
           column1 << cell.render(true)
         elsif coordinate[1].to_i == 2
