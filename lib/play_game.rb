@@ -30,6 +30,7 @@ class PlayGame
       if player_input == "p"
         game_setup
       elsif player_input == "q"
+        puts "You've left the battlefield.."
       else
         puts "Invalid input. Please enter 'p' or 'q'."
         print "> "
