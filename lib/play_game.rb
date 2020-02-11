@@ -21,8 +21,7 @@ class PlayGame
 
   def game_menu
     puts "Welcome to BATTLESHIP!"
-    puts "Enter 'p' to play. Enter 'q' to quit."
-    print "> "
+    print "Enter 'p' to play. Enter 'q' to quit.\n> "
 
     player_input = gets.chomp.downcase
 
@@ -32,19 +31,17 @@ class PlayGame
       elsif player_input == "q"
         puts "You've left the battlefield.."
       else
-        puts "Invalid input. Please enter 'p' or 'q'."
-        print "> "
+        print "Invalid input. Please enter 'p' or 'q'.\n> "
         player_input = gets.chomp.downcase
       end
     end
   end
 
   def game_setup
+    board_setup
+
     puts "You need to place your two ships on the board."
     puts "The Cruiser is three units long and the Submarine is two units long."
-
-    @player_board = Board.new
-    @computer_board = Board.new
 
     place_player_ships(@player_cruiser)
     place_player_ships(@player_submarine)
@@ -52,9 +49,23 @@ class PlayGame
     place_computer_cruiser
     place_computer_submarine
 
-    puts "\n Setup complete. Game staring now... \n"
+    print "\n Setup complete. Game staring now... \n"
     sleep(1)
     game_start
+  end
+
+  def board_setup
+    print "Enter the size of the board you'd like to play with, up a max of 26.\n> "
+    board_size = gets.chomp.to_i
+    until board_size < 26
+      print "Invalid size.\n> "
+      board_size = gets.chomp
+    end
+
+    @player_board = Board.new(board_size)
+    @computer_board = Board.new(board_size)
+    @player_board.create_cells
+    @computer_board.create_cells
   end
 
   def game_start
@@ -95,12 +106,10 @@ class PlayGame
     puts "\n ==============PLAYER BOARD=============="
     puts @player_board.render(true)
 
-    puts "Enter the coordinates for the #{ship.name} (#{ship.length} spaces)"
-    print "> "
+    print "Enter the coordinates for the #{ship.name} (#{ship.length} spaces)\n> "
     coordinates = gets.chomp.upcase.gsub(/[^0-9a-z ]/i, '').split(" ")
     until @player_board.valid_placement?(ship, coordinates)
-        puts "Those are invalid coordinates. Please try again."
-        print "> "
+        print "Those are invalid coordinates. Please try again.\n> "
         coordinates = gets.chomp.upcase.gsub(/[^0-9a-z ]/i, '').split(" ")
     end
     coordinates
@@ -139,14 +148,12 @@ class PlayGame
   end
 
   def player_fire_upon
-    puts "Enter the coordinate for your shot"
-    print "> "
+    print "Enter the coordinate for your shot.\n> "
 
     player_shot = gets.chomp.upcase
 
     until @computer_board.valid_coordinate?(player_shot) && @computer_board.cells[player_shot].fired_upon? == false
-      puts "Invalid. Please enter a valid coordinate for your shot"
-      print "> "
+      puts "Invalid. Please enter a valid coordinate for your shot.\n> "
       player_shot = gets.chomp.upcase
     end
 
@@ -160,9 +167,16 @@ class PlayGame
     until @player_board.cells[computer_shot].fired_upon? == false
       computer_shot = @player_board.cells.keys.sample
     end
-
     @player_board.cells[computer_shot].fire_upon
+
     computer_shot
+  end
+
+  def smart_shot
+    hit_ship = []
+    computer_column = []
+    computer_row = []
+    binding.pry
   end
 
   def player_shot_feedback(player_fire)

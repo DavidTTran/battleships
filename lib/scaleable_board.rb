@@ -75,4 +75,7 @@ class Board
     end
     grid
   end
+  # board = Board.new(10)
+  # board.create_cells
+  # binding.pry
 end
