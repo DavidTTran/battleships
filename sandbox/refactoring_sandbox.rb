@@ -5,16 +5,19 @@ require 'pry'
 
 class Board
 
-  attr_reader :cells
+  attr_reader :cells, :size
 
   def initialize(size)
     @size = size
+    @cells = create_cells
+  end
 
+  def create_cells
     cells = cell_rows.zip(cell_columns).map(&:join)
 
-    @cells = {}
-    cells.each do |cell|
-      @cells["#{cell}"] = Cell.new("#{cell}")
+    cells.reduce({}) do |hash, cell|
+      hash[cell] = Cell.new("#{cell}")
+      hash
     end
   end
 
@@ -49,6 +52,7 @@ class Board
     column_number_array.each do |number|
       numbers << ("#{number}" * @size).split('')
     end
+    numbers = numbers.join.split('')
     numbers
   end
 
@@ -110,68 +114,66 @@ class Board
       end
   end
 
-  def create_column_names
-    "  " + horizontal_consec_numbers.join(" ")
-  end
-
-  # def create_column_array_names
-  #   names = horizontal_consec_numbers.map { |number| "column" + number.to_s }
-  #
-  #   names.map { |name| name = [] }
-  # end
-
-  def create_row_names
-    vertical_consec_letters.map { |letter| letter + "\n"}
+  def create_rows
+    rendered_cells = []
+    @cells.values.each { |cell| rendered_cells << cell.render }
+    sorted_cells = rendered_cells.sort
+    sorted = sorted_cells.each_slice(@size).to_a
+    sorted
   end
 
   def render_board
+    rows = create_rows
+     rows.each do |row|
+       row
+     end
 
 
   end
 
-    # @cells.map do |coordinate, cell|
-    #   horizontal_consec_numbers.each do |number|
-    #     if create_column_arrays.names == coordinate[1]
-    #     column << cell.render
-    #     end
-    #   end
-    # end
+  # "  " + horizontal_consec_numbers.join(" ")
+  # vertical_consec_letters.map { |letter| letter + "\n"}
 
-  def render(show_ship = false)
-    column1 = []
-    column2 = []
-    column3 = []
-    column4 = []
-
-    if show_ship == true
-      @cells.map do |coordinate, cell|
-        if coordinate[1].to_i == 1
-          column1 << cell.render(true)
-        elsif coordinate[1].to_i == 2
-          column2 << cell.render(true)
-        elsif coordinate[1].to_i == 3
-          column3 << cell.render(true)
-        elsif coordinate[1].to_i == 4
-          column4 << cell.render(true)
-        end
-      end
-    else
-      @cells.map do |coordinate, cell|
-        if coordinate[1].to_i == 1
-          column1 << cell.render
-        elsif coordinate[1].to_i == 2
-          column2 << cell.render
-        elsif coordinate[1].to_i == 3
-          column3 << cell.render
-        elsif coordinate[1].to_i == 4
-          column4 << cell.render
-        end
-      end
-    end
-    "  1 2 3 4 \n" +
-    "A #{column1[0]} #{column2[0]} #{column3[0]} #{column4[0]} \n" +
-    "B #{column1[1]} #{column2[1]} #{column3[1]} #{column4[1]} \n" +
-    "C #{column1[2]} #{column2[2]} #{column3[2]} #{column4[2]} \n" +
-    "D #{column1[3]} #{column2[3]} #{column3[3]} #{column4[3]} \n"
-  end
+#   def render(show_ship = false)
+#     column1 = []
+#     column2 = []
+#     column3 = []
+#     column4 = []
+#
+#     if show_ship == true
+#       @cells.map do |coordinate, cell|
+#         if coordinate[1].to_i == 1
+#           column1 << cell.render(true)
+#         elsif coordinate[1].to_i == 2
+#           column2 << cell.render(true)
+#         elsif coordinate[1].to_i == 3
+#           column3 << cell.render(true)
+#         elsif coordinate[1].to_i == 4
+#           column4 << cell.render(true)
+#         end
+#       end
+#     else
+#       @cells.map do |coordinate, cell|
+#         if coordinate[1].to_i == 1
+#           column1 << cell.render
+#         elsif coordinate[1].to_i == 2
+#           column2 << cell.render
+#         elsif coordinate[1].to_i == 3
+#           column3 << cell.render
+#         elsif coordinate[1].to_i == 4
+#           column4 << cell.render
+#         end
+#       end
+#     end
+#     "  1 2 3 4 \n" +
+#     "A #{column1[0]} #{column2[0]} #{column3[0]} #{column4[0]} \n" +
+#     "B #{column1[1]} #{column2[1]} #{column3[1]} #{column4[1]} \n" +
+#     "C #{column1[2]} #{column2[2]} #{column3[2]} #{column4[2]} \n" +
+#     "D #{column1[3]} #{column2[3]} #{column3[3]} #{column4[3]} \n"
+#   end
 end
+
+board = Board.new(6)
+# p board.cells["A1"].render
+board.create_rows
+board.render_board
