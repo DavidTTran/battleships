@@ -5,16 +5,19 @@ class PlayGame
 
   attr_reader :player_board,
               :computer_board,
-              # :player_cruiser,
-              # :player_submarine,
               :computer_cruiser,
               :computer_submarine
+              # :player_cruiser,
+              # :player_submarine,
 
   def initialize
-    # @player_board = Board.new
-    # @computer_board = Board.new
+    @player_ships = []
+    @computer_ships = []
+
     @player_cruiser = Ship.new("Cruiser", 3)
     @player_submarine = Ship.new("Submarine", 2)
+    # @player_board = Board.new
+    # @computer_board = Board.new
     # @computer_cruiser = Ship.new("Cruiser", 3)
     # @computer_submarine = Ship.new("Submarine", 2)
   end
@@ -39,15 +42,13 @@ class PlayGame
 
   def game_setup
     board_setup
+    ship_setup
 
-    puts "You need to place your two ships on the board."
-    puts "The Cruiser is three units long and the Submarine is two units long."
+    puts "You need to place your ships on the board."
 
-    place_player_ships(@player_cruiser)
-    place_player_ships(@player_submarine)
+    player_ships
 
-    place_computer_cruiser
-    place_computer_submarine
+    computer_ships
 
     print "\n Setup complete. Game staring now... \n"
     sleep(1)
@@ -66,6 +67,24 @@ class PlayGame
     @computer_board = Board.new(board_size)
     @player_board.create_cells
     @computer_board.create_cells
+  end
+
+  def ship_setup
+    puts "Now lets create the ships for you and me. You need at least one ship."
+    print "How many ships would you like to create?\n> "
+    ship_count = gets.chomp.to_i
+
+    until @player_ships.size == ship_count
+      print "Enter the name of your ship\n> "
+      ship_name = gets.chomp
+      print "Enter the size of your ship\n> "
+      ship_size = gets.chomp.to_i
+
+      player_ship = Ship.new(ship_name, ship_size)
+      computer_ship = Ship.new(ship_name, ship_size)
+      @player_ships << player_ship
+      @computer_ships << computer_ship
+    end
   end
 
   def game_start
@@ -87,11 +106,15 @@ class PlayGame
   end
 
   def player_ships_sunk?
-    @player_submarine.sunk? && @player_cruiser.sunk?
+    @player_ships.all? do |player_ship|
+      player_ship.sunk?
+    end
   end
 
   def computer_ships_sunk?
-    @computer_submarine.sunk? && @computer_cruiser.sunk?
+    @computer_ships.all? do |computer_ship|
+      computer_ship.sunk?
+    end
   end
 
   def render_boards
@@ -102,15 +125,21 @@ class PlayGame
     puts "========================================"
   end
 
+  def player_ships
+    @player_ships.each do |ship|
+      place_player_ships(ship)
+    end
+  end
+
   def player_ship_coords(ship)
     puts "\n ==============PLAYER BOARD=============="
     puts @player_board.render(true)
 
-    print "Enter the coordinates for the #{ship.name} (#{ship.length} spaces)\n> "
-    coordinates = gets.chomp.upcase.gsub(/[^0-9a-z ]/i, '').split(" ")
+    print "Enter the coordinates for the #{ship.name} #{ship.length} spaces\n> "
+    coordinates = gets.chomp.upcase.gsub(",", "").split(" ")
     until @player_board.valid_placement?(ship, coordinates)
-        print "Those are invalid coordinates. Please try again.\n> "
-        coordinates = gets.chomp.upcase.gsub(/[^0-9a-z ]/i, '').split(" ")
+      print "Those are invalid coordinates. Please try again.\n> "
+      coordinates = gets.chomp.upcase.gsub(",", "").split(" ")
     end
     coordinates
   end
@@ -119,32 +148,23 @@ class PlayGame
     @player_board.place(ship, player_ship_coords(ship))
   end
 
-  def computer_submarine_coord(computer_submarine)
-    com_sub_coord = @computer_board.cells.keys.sample(2)
-
-    until @computer_board.valid_placement?(computer_submarine, com_sub_coord) && (com_sub_coord.all? {|coord| @computer_board.cells[coord].empty? == true})
-      com_sub_coord = @computer_board.cells.keys.sample(2)
+  def computer_ships
+    @computer_ships.each do |computer_ship|
+      place_computer_ships(computer_ship)
     end
-    com_sub_coord
   end
 
-  def computer_cruiser_coord(computer_cruiser)
-    com_cruiser_coord = @computer_board.cells.keys.sample(3)
+  def computer_ship_coord(computer_ship)
+    com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
 
-    until @computer_board.valid_placement?(computer_cruiser, com_cruiser_coord) && com_cruiser_coord.all? {|coord| @computer_board.cells[coord].empty? == true}
-      com_cruiser_coord = @computer_board.cells.keys.sample(3)
+    until @computer_board.valid_placement?(computer_ship, com_ship_coord) && (com_ship_coord.all? {|coord| @computer_board.cells[coord].empty? == true})
+      com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
     end
-    com_cruiser_coord
+    com_ship_coord
   end
 
-  def place_computer_cruiser
-    @computer_cruiser = Ship.new("cruiser", 3)
-    @computer_board.place(computer_cruiser, computer_cruiser_coord(computer_cruiser))
-  end
-
-  def place_computer_submarine
-    @computer_submarine = Ship.new("submarine", 2)
-    @computer_board.place(computer_submarine, computer_submarine_coord(computer_submarine))
+  def place_computer_ships(computer_ship)
+    @computer_board.place(computer_ship, computer_ship_coord(computer_ship))
   end
 
   def player_fire_upon
@@ -170,13 +190,6 @@ class PlayGame
     @player_board.cells[computer_shot].fire_upon
 
     computer_shot
-  end
-
-  def smart_shot
-    hit_ship = []
-    computer_column = []
-    computer_row = []
-    binding.pry
   end
 
   def player_shot_feedback(player_fire)
