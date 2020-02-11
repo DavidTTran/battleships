@@ -1,29 +1,21 @@
-require './lib/cell'
+require './lib/cell.rb'
 require 'pry'
 
 class Board
 
-  attr_reader :cells
+  attr_reader :cells, :size
 
-  def initialize
-    @cells = {
-      "A1" => Cell.new("A1"),
-      "A2" => Cell.new("A2"),
-      "A3" => Cell.new("A3"),
-      "A4" => Cell.new("A4"),
-      "B1" => Cell.new("B1"),
-      "B2" => Cell.new("B2"),
-      "B3" => Cell.new("B3"),
-      "B4" => Cell.new("B4"),
-      "C1" => Cell.new("C1"),
-      "C2" => Cell.new("C2"),
-      "C3" => Cell.new("C3"),
-      "C4" => Cell.new("C4"),
-      "D1" => Cell.new("D1"),
-      "D2" => Cell.new("D2"),
-      "D3" => Cell.new("D3"),
-      "D4" => Cell.new("D4")
-    }
+  def initialize(size)
+    @size = size
+    @cells = {}
+  end
+
+  def create_cells
+    ("A".."Z").to_a.first(@size).each do |letter|
+      (1..@size).to_a.each do |number|
+        @cells["#{letter}#{number}"] = Cell.new("#{letter}#{number}")
+      end
+    end
   end
 
   def valid_coordinate?(coordinate)
@@ -35,7 +27,7 @@ class Board
   end
 
   def horizontal_check(coordinates)
-    consecutive_num = (1..4).to_a.join
+    consecutive_num = (1..@size).to_a.join
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
     number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
 
@@ -43,7 +35,7 @@ class Board
   end
 
   def vertical_check(coordinates)
-    consecutive_letter = ("A".."D").to_a.join
+    consecutive_letter = ("A".."Z").to_a.join
     number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
 
@@ -63,40 +55,24 @@ class Board
   end
 
   def render(show_ship = false)
-    column1 = []
-    column2 = []
-    column3 = []
-    column4 = []
+    starting_letter = "A"
+    grid = ""
 
     if show_ship == true
-      @cells.map do |coordinate, cell|
-        if coordinate[1].to_i == 1
-          column1 << cell.render(true)
-        elsif coordinate[1].to_i == 2
-          column2 << cell.render(true)
-        elsif coordinate[1].to_i == 3
-          column3 << cell.render(true)
-        elsif coordinate[1].to_i == 4
-          column4 << cell.render(true)
-        end
-      end
+      render = @cells.map {|coordinate, cell| cell.render(true)}
+      render_row = render.each_slice(@size).to_a
     else
-      @cells.map do |coordinate, cell|
-        if coordinate[1].to_i == 1
-          column1 << cell.render
-        elsif coordinate[1].to_i == 2
-          column2 << cell.render
-        elsif coordinate[1].to_i == 3
-          column3 << cell.render
-        elsif coordinate[1].to_i == 4
-          column4 << cell.render
-        end
-      end
+      render = @cells.map {|coordinate, cell| cell.render}
+      render_row = render.each_slice(@size).to_a
     end
-    "  1 2 3 4 \n" +
-    "A #{column1[0]} #{column2[0]} #{column3[0]} #{column4[0]} \n" +
-    "B #{column1[1]} #{column2[1]} #{column3[1]} #{column4[1]} \n" +
-    "C #{column1[2]} #{column2[2]} #{column3[2]} #{column4[2]} \n" +
-    "D #{column1[3]} #{column2[3]} #{column3[3]} #{column4[3]} \n"
+
+    grid << "  " + (1..@size).to_a.join(" ") + "\n"
+
+    @size.times do |row|
+      grid << "#{starting_letter}" + " " + render_row.first.each_slice(1).to_a.join(' ') + "\n"
+      render_row.rotate!
+      starting_letter = starting_letter.next
+    end
+    grid
   end
 end

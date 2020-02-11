@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/ship'
 require './lib/cell'
-require './lib/scaleable_board.rb'
+require './lib/board.rb'
 
 
 class ScaleableBoardTest < Minitest::Test

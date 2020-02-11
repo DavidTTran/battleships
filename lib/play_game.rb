@@ -1,5 +1,5 @@
 require './lib/ship'
-require './lib/scaleable_board'
+require './lib/board'
 
 class PlayGame
 
