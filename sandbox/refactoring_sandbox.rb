@@ -49,6 +49,7 @@ class Board
     column_number_array.each do |number|
       numbers << ("#{number}" * @size).split('')
     end
+    numbers = numbers.join.split('')
     numbers
   end
 
@@ -110,19 +111,19 @@ class Board
       end
   end
 
-  def create_column_names
-    "  " + horizontal_consec_numbers.join(" ")
-  end
-
-  # def create_column_array_names
-  #   names = horizontal_consec_numbers.map { |number| "column" + number.to_s }
-  #
-  #   names.map { |name| name = [] }
+  # def create_column_names
+  #   "  " + horizontal_consec_numbers.join(" ")
   # end
-
-  def create_row_names
-    vertical_consec_letters.map { |letter| letter + "\n"}
-  end
+  #
+  # # def create_column_array_names
+  # #   names = horizontal_consec_numbers.map { |number| "column" + number.to_s }
+  # #
+  # #   names.map { |name| name = [] }
+  # # end
+  #
+  # def create_row_names
+  #   vertical_consec_letters.map { |letter| letter + "\n"}
+  # end
 
   def render_board
 
@@ -168,10 +169,13 @@ class Board
         end
       end
     end
-    "  1 2 3 4 \n" +
+    " 1 2 3 4 \n" +
     "A #{column1[0]} #{column2[0]} #{column3[0]} #{column4[0]} \n" +
     "B #{column1[1]} #{column2[1]} #{column3[1]} #{column4[1]} \n" +
     "C #{column1[2]} #{column2[2]} #{column3[2]} #{column4[2]} \n" +
     "D #{column1[3]} #{column2[3]} #{column3[3]} #{column4[3]} \n"
   end
+  board = Board.new(4)
+  board.render
+  binding.pry
 end
