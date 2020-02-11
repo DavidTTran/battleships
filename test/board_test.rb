@@ -2,13 +2,14 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/ship'
 require './lib/cell'
-require './lib/board'
+require './lib/scaleable_board.rb'
 
 
-class BoardTest < Minitest::Test
+class ScaleableBoardTest < Minitest::Test
 
   def setup
-    @board = Board.new
+    @board = Board.new(5)
+    @board.create_cells
     @cruiser = Ship.new("Cruiser", 3)
     @submarine = Ship.new("Submarine", 2)
   end
@@ -19,15 +20,18 @@ class BoardTest < Minitest::Test
 
   def test_it_can_have_cells
     assert_instance_of Hash, @board.cells
-    assert_equal 16, @board.cells.size
+    assert_equal 25, @board.cells.size
     assert_instance_of Cell, @board.cells["A1"]
   end
 
   def test_it_can_validate_coordinates
     assert @board.valid_coordinate?("A1")
     assert @board.valid_coordinate?("D4")
-    refute @board.valid_coordinate?("A5")
-    refute @board.valid_coordinate?("E1")
+    assert @board.valid_coordinate?("A5")
+    assert @board.valid_coordinate?("A5")
+    assert @board.valid_coordinate?("E1")
+    refute @board.valid_coordinate?("G1")
+    refute @board.valid_coordinate?("H7")
     refute @board.valid_coordinate?("A22")
   end
 
@@ -81,33 +85,37 @@ class BoardTest < Minitest::Test
   def test_board_render_with_ships
     @board.place(@cruiser, ["A1", "A2", "A3"])
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A . . . . \n" +
-                 "B . . . . \n" +
-                 "C . . . . \n" +
-                 "D . . . . \n", @board.render
+    assert_equal "  1 2 3 4 5\n" +
+                 "A . . . . .\n" +
+                 "B . . . . .\n" +
+                 "C . . . . .\n" +
+                 "D . . . . .\n" +
+                 "E . . . . .\n", @board.render
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A S S S . \n" +
-                 "B . . . . \n" +
-                 "C . . . . \n" +
-                 "D . . . . \n", @board.render(true)
+    assert_equal "  1 2 3 4 5\n" +
+                 "A S S S . .\n" +
+                 "B . . . . .\n" +
+                 "C . . . . .\n" +
+                 "D . . . . .\n" +
+                 "E . . . . .\n", @board.render(true)
 
     @board.place(@submarine, ["C1", "D1"])
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A S S S . \n" +
-                 "B . . . . \n" +
-                 "C S . . . \n" +
-                 "D S . . . \n", @board.render(true)
+    assert_equal "  1 2 3 4 5\n" +
+                 "A S S S . .\n" +
+                 "B . . . . .\n" +
+                 "C S . . . .\n" +
+                 "D S . . . .\n" +
+                 "E . . . . .\n", @board.render(true)
 
     @board.place(@cruiser, ["D2", "D3", "D4"])
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A S S S . \n" +
-                 "B . . . . \n" +
-                 "C S . . . \n" +
-                 "D S S S S \n", @board.render(true)
+    assert_equal "  1 2 3 4 5\n" +
+                 "A S S S . .\n" +
+                 "B . . . . .\n" +
+                 "C S . . . .\n" +
+                 "D S S S S .\n" +
+                 "E . . . . .\n", @board.render(true)
   end
 
   def test_shots_can_miss
@@ -118,11 +126,12 @@ class BoardTest < Minitest::Test
     cell_1.fire_upon
     cell_2.fire_upon
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A S S S . \n" +
-                 "B . . . . \n" +
-                 "C S . M . \n" +
-                 "D S . . M \n", @board.render(true)
+    assert_equal "  1 2 3 4 5\n" +
+                 "A S S S . .\n" +
+                 "B . . . . .\n" +
+                 "C S . M . .\n" +
+                 "D S . . M .\n" +
+                 "E . . . . .\n", @board.render(true)
   end
 
   def test_shots_can_miss
@@ -132,11 +141,12 @@ class BoardTest < Minitest::Test
     cell_2 = @board.cells["C3"]
     cell_1.fire_upon
     cell_2.fire_upon
-    assert_equal "  1 2 3 4 \n" +
-                 "A S S S . \n" +
-                 "B . . . . \n" +
-                 "C S . M . \n" +
-                 "D S . . M \n", @board.render(true)
+    assert_equal "  1 2 3 4 5\n" +
+                 "A S S S . .\n" +
+                 "B . . . . .\n" +
+                 "C S . M . .\n" +
+                 "D S . . M .\n" +
+                 "E . . . . .\n", @board.render(true)
   end
 
   def test_shots_can_hit_and_destory_ship
@@ -146,18 +156,20 @@ class BoardTest < Minitest::Test
     cell_1.fire_upon
     cell_2.fire_upon
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A H H . . \n" +
-                 "B . . . . \n" +
-                 "C . . . . \n" +
-                 "D . . . . \n", @board.render
+    assert_equal "  1 2 3 4 5\n" +
+                 "A H H . . .\n" +
+                 "B . . . . .\n" +
+                 "C . . . . .\n" +
+                 "D . . . . .\n" +
+                 "E . . . . .\n", @board.render
     cell_3 = @board.cells["A3"]
     cell_3.fire_upon
 
-    assert_equal "  1 2 3 4 \n" +
-                 "A X X X . \n" +
-                 "B . . . . \n" +
-                 "C . . . . \n" +
-                 "D . . . . \n", @board.render
+    assert_equal "  1 2 3 4 5\n" +
+                 "A X X X . .\n" +
+                 "B . . . . .\n" +
+                 "C . . . . .\n" +
+                 "D . . . . .\n" +
+                 "E . . . . .\n", @board.render
   end
 end
