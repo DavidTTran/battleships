@@ -1,5 +1,4 @@
 require './lib/cell.rb'
-require 'pry'
 
 class Board
 
@@ -27,19 +26,18 @@ class Board
   end
 
   def horizontal_check(coordinates)
-    consecutive_num = (1..@size).to_a.join
-    letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
-    number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
+    letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.uniq
+    number_arr = coordinates.map {|coordinate| coordinate.slice(1..2).to_i}
 
-    horizontal_check = (letter_arr.squeeze.size == 1 && consecutive_num.include?(number_arr))
+    horizontal_check = letter_arr.size == 1 && (number_arr.max - number_arr.min == coordinates.size - 1)
   end
 
   def vertical_check(coordinates)
     consecutive_letter = ("A".."Z").to_a.join
-    number_arr = coordinates.map {|coordinate| coordinate.slice(1).to_i}.join
+    number_arr = coordinates.map {|coordinate| coordinate.slice(1..2).to_i}.uniq
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
 
-    vertical_check = (number_arr.squeeze.size == 1 && consecutive_letter.include?(letter_arr))
+    vertical_check = (number_arr.size == 1 && consecutive_letter.include?(letter_arr))
   end
 
   def valid_placement?(ship_object, coordinates)
