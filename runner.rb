@@ -1,7 +1,7 @@
 require './lib/ship'
 require './lib/cell'
 require './lib/board'
-require './lib/play_game'
+require './lib/game'
 
-game = PlayGame.new
+game = Game.new
 game.game_menu
