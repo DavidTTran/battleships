@@ -28,5 +28,4 @@ class GameTest < Minitest::Test
     assert_instance_of Board, @game.player_board
     assert_instance_of Board, @game.computer_board
   end
-
 end

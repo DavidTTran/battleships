@@ -39,12 +39,11 @@ class Game
 
   def game_setup
     board_setup
-    ship_setup
+    create_ships
 
     puts "You need to place your ships on the board."
 
     player_ships
-
     computer_ships
 
     print "\n Setup complete. Game staring now... \n"
@@ -67,14 +66,18 @@ class Game
   end
 
   def ship_setup
-    puts "Now lets create the ships for you and me. You need at least 1 ship."
-    print "How many ships would you like to create? You can have a maximum of 10 ships\n> "
+    puts "Now lets create the ships for you and me. You need at least 1 ship and can have a maximum of 10 ships."
+    print "How many ships would you like to create?\n> "
     ship_count = user_input.to_i
     until ship_count > 0 && ship_count < 10
       print "Invalid number of ships.\n> "
       ship_count = user_input.to_i
     end
+    ship_count
+  end
 
+  def create_ships
+    ship_count = ship_setup
     until @player_ships.size == ship_count
       print "Enter the name of your ship\n> "
       ship_name = user_input
@@ -92,6 +95,49 @@ class Game
     end
   end
 
+  def player_ship_coords(ship)
+    puts "\n ==============PLAYER BOARD=============="
+    puts @player_board.render(true)
+
+    print "Enter the coordinates for the #{(ship.name).capitalize} (#{ship.length} spaces)\n> "
+    coordinates = user_input.upcase.gsub(/[^0-9a-z ]/i, "").split(" ")
+    until @player_board.valid_placement?(ship, coordinates)
+      print "Those are invalid coordinates. Please try again.\n> "
+      coordinates = user_input.upcase.gsub(/[^0-9a-z ]/i, "").split(" ")
+    end
+    coordinates
+  end
+
+  def place_player_ships(ship)
+    @player_board.place(ship, player_ship_coords(ship))
+  end
+
+  def player_ships
+    @player_ships.each do |ship|
+      place_player_ships(ship)
+    end
+  end
+
+  def computer_ship_coord(computer_ship)
+    com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
+
+    until @computer_board.valid_placement?(computer_ship, com_ship_coord) &&
+      (com_ship_coord.all? {|coord| @computer_board.cells[coord].empty? == true})
+      com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
+    end
+    com_ship_coord
+  end
+
+  def place_computer_ships(computer_ship)
+    @computer_board.place(computer_ship, computer_ship_coord(computer_ship))
+  end
+
+  def computer_ships
+    @computer_ships.each do |computer_ship|
+      place_computer_ships(computer_ship)
+    end
+  end
+
   def game_start
     until player_ships_sunk? || computer_ships_sunk?
       render_boards
@@ -101,25 +147,18 @@ class Game
     game_end
   end
 
-  def game_end
-    if player_ships_sunk?
-      puts "\n==========Game over! You lost..==========\n\n"
-    else
-      puts "\n==========Game over! You won!!==========\n\n"
-    end
-    game_menu
-  end
-
   def player_ships_sunk?
     @player_ships.all? do |player_ship|
       player_ship.sunk?
     end
+    player_ships_sunk?
   end
 
   def computer_ships_sunk?
     @computer_ships.all? do |computer_ship|
       computer_ship.sunk?
     end
+    computer_ships_sunk?
   end
 
   def render_boards
@@ -130,56 +169,14 @@ class Game
     puts "========================================"
   end
 
-  def player_ships
-    @player_ships.each do |ship|
-      place_player_ships(ship)
-    end
-  end
-
-  def player_ship_coords(ship)
-    puts "\n ==============PLAYER BOARD=============="
-    puts @player_board.render(true)
-
-    print "Enter the coordinates for the #{(ship.name).capitalize} (#{ship.length} spaces)\n> "
-    coordinates = user_input.upcase.gsub(",", "").split(" ")
-    until @player_board.valid_placement?(ship, coordinates)
-      print "Those are invalid coordinates. Please try again.\n> "
-      coordinates = user_input.upcase.gsub(",", "").split(" ")
-    end
-    coordinates
-  end
-
-  def place_player_ships(ship)
-    @player_board.place(ship, player_ship_coords(ship))
-  end
-
-  def computer_ships
-    @computer_ships.each do |computer_ship|
-      place_computer_ships(computer_ship)
-    end
-  end
-
-  def computer_ship_coord(computer_ship)
-    com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
-
-    until @computer_board.valid_placement?(computer_ship, com_ship_coord) && (com_ship_coord.all? {|coord| @computer_board.cells[coord].empty? == true})
-      com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
-    end
-    com_ship_coord
-  end
-
-  def place_computer_ships(computer_ship)
-    @computer_board.place(computer_ship, computer_ship_coord(computer_ship))
-  end
-
   def player_fire_upon
     print "Enter the coordinate for your shot.\n> "
-
     player_shot = user_input.upcase
 
-    until @computer_board.valid_coordinate?(player_shot) && @computer_board.cells[player_shot].fired_upon? == false
-      puts "Invalid. Please enter a valid coordinate for your shot.\n> "
-      player_shot = user_input.upcase
+    until @computer_board.valid_coordinate?(player_shot) &&
+      @computer_board.cells[player_shot].fired_upon? == false
+        puts "Invalid. Please enter a valid coordinate for your shot.\n> "
+        player_shot = user_input.upcase
     end
 
     @computer_board.cells[player_shot].fire_upon
@@ -215,5 +212,21 @@ class Game
     else
       puts "\nThe enemy shot hit your ship!"
     end
+  end
+
+  def remove_ships
+    @player_ships = []
+    @computer_ships = []
+  end
+
+  def game_end
+    render_boards
+    remove_ships
+    if player_ships_sunk?
+      puts "\n==========Game over! You lost..==========\n\n"
+    else
+      puts "\n==========Game over! You won!!==========\n\n"
+    end
+    game_menu
   end
 end
