@@ -29,7 +29,8 @@ class Board
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.uniq
     number_arr = coordinates.map {|coordinate| coordinate.slice(1..2).to_i}
 
-    horizontal_check = letter_arr.size == 1 && (number_arr.max - number_arr.min == coordinates.size - 1)
+    horizontal_check = (letter_arr.size == 1) &&
+      (number_arr.max - number_arr.min == coordinates.size - 1)
   end
 
   def vertical_check(coordinates)
@@ -41,7 +42,8 @@ class Board
   end
 
   def valid_placement?(ship_object, coordinates)
-    (coordinates.size == ship_object.length) && (horizontal_check(coordinates) || vertical_check(coordinates)) && (is_occupied?(coordinates) == false)
+    (coordinates.size == ship_object.length) && (horizontal_check(coordinates) ||
+      vertical_check(coordinates)) && (is_occupied?(coordinates) == false)
   end
 
   def place(ship_object, coordinates)
