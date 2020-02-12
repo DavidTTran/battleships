@@ -53,11 +53,11 @@ class Game
   end
 
   def board_setup
-    print "Enter the size of the board you'd like to play with, up a max of 26.\n> "
+    print "Enter the size of the board you'd like to play with, it must be between 4 and 26.\n> "
     board_size = user_input.to_i
-    until board_size < 26
+    until board_size < 27 && board_size > 3
       print "Invalid size.\n> "
-      board_size = user_input
+      board_size = user_input.to_i
     end
 
     @player_board = Board.new(board_size)
@@ -67,15 +67,23 @@ class Game
   end
 
   def ship_setup
-    puts "Now lets create the ships for you and me. You need at least one ship."
-    print "How many ships would you like to create?\n> "
+    puts "Now lets create the ships for you and me. You need at least 1 ship."
+    print "How many ships would you like to create? You can have a maximum of 10 ships\n> "
     ship_count = user_input.to_i
+    until ship_count > 0 && ship_count < 10
+      print "Invalid number of ships.\n> "
+      ship_count = user_input.to_i
+    end
 
     until @player_ships.size == ship_count
       print "Enter the name of your ship\n> "
       ship_name = user_input
-      print "Enter the size of your ship\n> "
+      print "Enter the size of your ship. Your ship must be at least 1 cell in length\n> "
       ship_size = user_input.to_i
+      until ship_size > 0 && ship_size <= @player_board.size
+        print "Invalid size.\n> "
+        ship_size = user_input.to_i
+      end
 
       player_ship = Ship.new(ship_name, ship_size)
       computer_ship = Ship.new(ship_name, ship_size)
