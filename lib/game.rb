@@ -193,7 +193,7 @@ class Game
   def player_shot_feedback(player_fire)
     if @computer_board.cells[player_fire].empty?
       puts "\nYour shot missed!"
-    elsif @computer_board.cells[player_fire].ship.health < 1
+    elsif @computer_board.cells[player_fire].ship.sunk?
       puts "\nYour shot sunk an enemy ship!"
     else
       puts "\nYour shot hit an enemy ship!"
@@ -203,7 +203,7 @@ class Game
   def computer_shot_feedback(computer_fire)
     if @player_board.cells[computer_fire].empty?
       puts "\nThe enemy shot missed!"
-    elsif @player_board.cells[computer_fire].ship.health < 1
+    elsif @player_board.cells[computer_fire].ship.sunk?
       puts "\nThe enemy shot sunk your ship!"
     else
       puts "\nThe enemy shot hit your ship!"
