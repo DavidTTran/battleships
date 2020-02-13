@@ -122,8 +122,7 @@ class Game
   def computer_ship_coord(computer_ship)
     com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
 
-    until @computer_board.valid_placement?(computer_ship, com_ship_coord) &&
-      (com_ship_coord.all? {|coord| @computer_board.cells[coord].empty? == true})
+    until @computer_board.valid_placement?(computer_ship, com_ship_coord)
       com_ship_coord = @computer_board.cells.keys.sample(computer_ship.length)
     end
     com_ship_coord
