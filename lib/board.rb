@@ -55,7 +55,6 @@ class Board
 
   def render_top_row
     top_row = "  "
-    # top_row << (1..@size).to_a.join(" ") + "\n"
 
     @size.times do |column|
       if column > 8
