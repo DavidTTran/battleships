@@ -46,7 +46,7 @@ class Game
 
     player_ships
     computer_ships
-
+    puts "\e[H\e[2J"
     print "\n Setup complete. Game staring now... \n"
     sleep(1)
     game_start
@@ -80,19 +80,17 @@ class Game
   def create_ships
     ship_count = ship_setup
     until @player_ships.size == ship_count
-      print "Enter the name of your ship\n> "
+      print "Enter the name of your ship.\n> "
       ship_name = user_input
-      print "Enter the size of your ship. Your ship must be at least 2 cells in length\n> "
+      print "Enter the size of your ship. Your ship must be at least 2 cells in length.\n> "
       ship_size = user_input.to_i
       until ship_size > 1 && ship_size <= @player_board.size
-        print "Invalid size.\n> "
+        print "Invalid size. Your ship must be at least 2 cells in length.\n> "
         ship_size = user_input.to_i
       end
 
-      player_ship = Ship.new(ship_name, ship_size)
-      computer_ship = Ship.new(ship_name, ship_size)
-      @player_ships << player_ship
-      @computer_ships << computer_ship
+      @player_ships << player_ship = Ship.new(ship_name, ship_size)
+      @computer_ships << computer_ship = Ship.new(ship_name, ship_size)
     end
   end
 
@@ -100,7 +98,8 @@ class Game
     puts "\n ==============PLAYER BOARD=============="
     puts @player_board.render(true)
 
-    print "Enter the coordinates for the #{(ship.name).capitalize} (#{ship.length} spaces)\n> "
+    puts "In the example format of; A1 A2 A3.."
+    print "Enter the coordinates for the #{(ship.name).capitalize} (that takes #{ship.length} spaces).\n> "
     coordinates = user_input.upcase.gsub(/[^0-9a-z ]/i, "").split(" ")
     until @player_board.valid_placement?(ship, coordinates)
       print "Those are invalid coordinates. Please try again.\n> "
@@ -141,6 +140,7 @@ class Game
   def game_start
     until player_ships_sunk? || computer_ships_sunk?
       render_boards
+      puts ""
       player_shot_feedback(player_fire_upon)
       computer_shot_feedback(computer_fire_upon)
     end
