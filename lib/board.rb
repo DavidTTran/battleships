@@ -56,6 +56,20 @@ class Board
     end
   end
 
+  def render_top_row
+    top_row = "  "
+
+    @size.times do |column|
+      if column > 8
+        top_row += (column + 1).to_s + " "
+      else
+        top_row += (column + 1).to_s + "  "
+      end
+    end
+    top_row += "\n"
+    puts top_row
+  end
+
   def render(show_ship = false)
     starting_letter = "A"
     grid = ""
@@ -68,13 +82,12 @@ class Board
       render_row = render.each_slice(@size).to_a
     end
 
-    grid << "  " + (1..@size).to_a.join(" ") + "\n"
-
     @size.times do |row|
-      grid << "#{starting_letter}" + " " + render_row.first.each_slice(1).to_a.join(' ') + "\n"
+      grid << "#{starting_letter}" + " " + render_row.first.each_slice(1).to_a.join("  ") + "\n"
       render_row.rotate!
       starting_letter = starting_letter.next
     end
+    render_top_row
     grid
   end
 end
