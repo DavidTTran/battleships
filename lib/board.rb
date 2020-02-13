@@ -29,7 +29,7 @@ class Board
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.uniq
     number_arr = coordinates.map {|coordinate| coordinate.slice(1..2).to_i}
 
-    (letter_arr.size == 1) && (number_arr.max - number_arr.min == coordinates.size - 1)
+    (letter_arr.size == 1) && (number_arr.last - number_arr.first == coordinates.size - 1)
   end
 
   def vertical_check(coordinates)
