@@ -5,7 +5,7 @@ require './lib/cell'
 require './lib/board.rb'
 
 
-class ScaleableBoardTest < Minitest::Test
+class BoardTest < Minitest::Test
 
   def setup
     @board = Board.new(5)
@@ -28,20 +28,20 @@ class ScaleableBoardTest < Minitest::Test
     assert @board.valid_coordinate?("A1")
     assert @board.valid_coordinate?("D4")
     assert @board.valid_coordinate?("A5")
-    assert @board.valid_coordinate?("A5")
     assert @board.valid_coordinate?("E1")
-    refute @board.valid_coordinate?("G1")
-    refute @board.valid_coordinate?("H7")
-    refute @board.valid_coordinate?("A22")
+    assert_equal false, @board.valid_coordinate?("A")
+    assert_equal false, @board.valid_coordinate?("Hh")
+    assert_equal false, @board.valid_coordinate?("A22")
+    assert_equal false, @board.valid_coordinate?("..")
+    assert_equal false, @board.valid_coordinate?("a  1")
   end
 
   def test_it_can_have_invalid_placements
-    refute @board.valid_placement?(@cruiser, ["A1", "A2"])
-    refute @board.valid_placement?(@submarine, ["A2", "A3", "A4"])
-    refute @board.valid_placement?(@submarine, ["A1", "C1"])
-    refute @board.valid_placement?(@cruiser, ["A3", "A2", "A1"])
-    refute @board.valid_placement?(@submarine, ["C1", "B1"])
-    refute @board.valid_placement?(@cruiser, ["A1", "A2", "A4"])
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A2"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A2", "A3", "A4"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A1", "C1"])
+    assert_equal false, @board.valid_placement?(@submarine, ["C1", "B1"])
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A2", "A4"])
   end
 
   def test_it_can_have_valid_placements
@@ -52,9 +52,9 @@ class ScaleableBoardTest < Minitest::Test
   end
 
   def test_it_will_deny_diagonals
-    refute @board.valid_placement?(@cruiser, ["A1", "B2", "C3"])
-    refute @board.valid_placement?(@submarine, ["C2", "D3"])
-    refute @board.valid_placement?(@submarine, ["D2", "E3"])
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "B2", "C3"])
+    assert_equal false, @board.valid_placement?(@submarine, ["C2", "D3"])
+    assert_equal false, @board.valid_placement?(@submarine, ["D2", "E3"])
   end
 
   def test_it_can_place_ships
@@ -65,10 +65,10 @@ class ScaleableBoardTest < Minitest::Test
     cell_4 = @board.cells["A4"]
 
     assert cell_3.ship == cell_2.ship
-    refute cell_4.ship == cell_3.ship
+    assert_equal false, cell_4.ship == cell_3.ship
 
-    refute @board.place(@submarine, ["A4", "A5"])
-    refute @board.place(@cruiser, ["A1", "A2", "A4"])
+    assert_nil @board.place(@submarine, ["A3", "A4"])
+    assert_nil @board.place(@cruiser, ["A1", "A2", "A4"])
   end
 
   def test_ships_cannot_overlap
@@ -77,8 +77,8 @@ class ScaleableBoardTest < Minitest::Test
     cell_2 = @board.cells["A2"]
     cell_3 = @board.cells["A3"]
 
-    refute @board.valid_placement?(@submarine, ["A1", "B1"])
-    refute @board.valid_placement?(@submarine, ["A3", "A4"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A3", "A4"])
     assert @board.valid_placement?(@submarine, ["A4", "B4"])
   end
 

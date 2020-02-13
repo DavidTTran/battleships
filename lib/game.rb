@@ -25,11 +25,12 @@ class Game
 
     player_input = user_input.downcase
 
-    while player_input != "p" || "q"
+    while player_input != "p" || player_input != "q"
       if player_input == "p"
         game_setup
       elsif player_input == "q"
         puts "You've left the battlefield.."
+        exit
       else
         print "Invalid input. Please enter 'p' or 'q'.\n> "
         player_input = user_input.downcase
@@ -66,10 +67,10 @@ class Game
   end
 
   def ship_setup
-    puts "Now lets create the ships for you and me. You need at least 1 ship and can have a maximum of 10 ships."
+    puts "Now lets create the ships for you and me. You need at least 1 ship and can have a maximum of #{@player_board.size/2} ships."
     print "How many ships would you like to create?\n> "
     ship_count = user_input.to_i
-    until ship_count > 0 && ship_count < 10
+    until ship_count > 0 && ship_count <= @player_board.size/2
       print "Invalid number of ships.\n> "
       ship_count = user_input.to_i
     end
@@ -81,9 +82,9 @@ class Game
     until @player_ships.size == ship_count
       print "Enter the name of your ship\n> "
       ship_name = user_input
-      print "Enter the size of your ship. Your ship must be at least 1 cell in length\n> "
+      print "Enter the size of your ship. Your ship must be at least 2 cells in length\n> "
       ship_size = user_input.to_i
-      until ship_size > 0 && ship_size <= @player_board.size
+      until ship_size > 1 && ship_size <= @player_board.size
         print "Invalid size.\n> "
         ship_size = user_input.to_i
       end
@@ -148,22 +149,18 @@ class Game
   end
 
   def player_ships_sunk?
-    @player_ships.all? do |player_ship|
-      player_ship.sunk?
-    end
-    player_ships_sunk?
+    lose = @player_ships.all? { |player_ship| player_ship.sunk? }
+    lose
   end
 
   def computer_ships_sunk?
-    @computer_ships.all? do |computer_ship|
-      computer_ship.sunk?
-    end
-    computer_ships_sunk?
+    win = @computer_ships.all? { |computer_ship| computer_ship.sunk? }
+    win
   end
 
   def render_boards
     puts "\n=============COMPUTER BOARD============= \n"
-    puts @computer_board.render(true)
+    puts @computer_board.render
     puts "==============PLAYER BOARD============== \n"
     puts @player_board.render(true)
     puts "========================================"
@@ -221,12 +218,12 @@ class Game
 
   def game_end
     render_boards
-    remove_ships
     if player_ships_sunk?
       puts "\n==========Game over! You lost..==========\n\n"
     else
       puts "\n==========Game over! You won!!==========\n\n"
     end
+    remove_ships
     game_menu
   end
 end

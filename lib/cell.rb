@@ -1,8 +1,6 @@
 class Cell
 
   attr_reader :coordinate, :ship, :empty, :fired_upon
-  alias_method :fired_upon?, :fired_upon
-  alias_method  :empty?, :empty
 
   def initialize(coordinate)
     @coordinate = coordinate

@@ -29,8 +29,7 @@ class Board
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.uniq
     number_arr = coordinates.map {|coordinate| coordinate.slice(1..2).to_i}
 
-    horizontal_check = (letter_arr.size == 1) &&
-      (number_arr.max - number_arr.min == coordinates.size - 1)
+    (letter_arr.size == 1) && (number_arr.max - number_arr.min == coordinates.size - 1)
   end
 
   def vertical_check(coordinates)
@@ -38,7 +37,7 @@ class Board
     number_arr = coordinates.map {|coordinate| coordinate.slice(1..2).to_i}.uniq
     letter_arr = coordinates.map {|coordinate| coordinate.slice(0)}.join
 
-    vertical_check = (number_arr.size == 1 && consecutive_letter.include?(letter_arr))
+    (number_arr.size == 1 && consecutive_letter.include?(letter_arr))
   end
 
   def valid_placement?(ship_object, coordinates)
@@ -47,11 +46,11 @@ class Board
   end
 
   def place(ship_object, coordinates)
-      if (valid_placement?(ship_object, coordinates))
-        coordinates.each do |coordinate|
-          @cells[coordinate].place_ship(ship_object)
-        end
+    if (valid_placement?(ship_object, coordinates))
+      coordinates.each do |coordinate|
+        @cells[coordinate].place_ship(ship_object)
       end
+    end
   end
 
   def render(show_ship = false)
